@@ -13,4 +13,5 @@ public class UserPublicProfileResponse {
     private String lastName;
     private String country;
     private String description;
+    private String photoUrl;
 }

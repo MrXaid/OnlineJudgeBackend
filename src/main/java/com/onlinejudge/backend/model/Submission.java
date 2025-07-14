@@ -19,7 +19,7 @@ public class Submission {
     private Long id;
 
     private String problemName;
-    @Lob
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String code;
 
     private String language;

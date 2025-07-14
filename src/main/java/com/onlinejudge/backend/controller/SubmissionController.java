@@ -6,6 +6,7 @@ import com.onlinejudge.backend.model.Problem;
 import com.onlinejudge.backend.model.TestCase;
 import com.onlinejudge.backend.payload.APIResponse;
 import com.onlinejudge.backend.payload.request.SubmissionRequest;
+import com.onlinejudge.backend.payload.response.SubmissionResponseDTO;
 import com.onlinejudge.backend.repository.UserRepository;
 import com.onlinejudge.backend.security.services.CustomUserDetails;
 import com.onlinejudge.backend.service.SubmissionService;
@@ -14,11 +15,14 @@ import jakarta.annotation.security.RolesAllowed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.*;
 import java.nio.file.*;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -110,4 +114,33 @@ public class SubmissionController {
         Path verdictPath = Paths.get(folder, "verdict.txt");
         return Files.readString(verdictPath).trim();
     }
+
+    @GetMapping("/my")
+    public ResponseEntity<?> getMySubmissions(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        List<Submission> submissions = submissionService.getSubmissionsByUserId(userDetails.getId());
+        List<SubmissionResponseDTO> dtoList = submissions.stream()
+                .map(submissionService::mapToDTO)
+                .toList();
+        return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping("/problem/{problemId}")
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    public ResponseEntity<?> getSubmissionsByProblemId(@PathVariable Long problemId) {
+        List<Submission> submissions = submissionService.getSubmissionsByProblemId(problemId);
+        List<SubmissionResponseDTO> dtoList = submissions.stream()
+                .map(submissionService::mapToDTO)
+                .toList();
+        return ResponseEntity.ok(dtoList);
+    }
+
+    @GetMapping("/my/activity")
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    public ResponseEntity<?> getMySubmissionActivity(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        Map<String, Integer> activityMap = submissionService.getActivityMapForUser(userDetails.getId());
+        return ResponseEntity.ok(activityMap);
+    }
+
+
+
 }

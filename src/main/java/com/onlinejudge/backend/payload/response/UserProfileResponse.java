@@ -17,5 +17,6 @@ public class UserProfileResponse {
     private String description;
     private String date;
     private String role; // read-only
+    private String photoUrl;
 }
 

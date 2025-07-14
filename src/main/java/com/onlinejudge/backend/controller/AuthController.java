@@ -60,6 +60,7 @@ public class AuthController {
         user.setEmail(signUpRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setRole(Role.USER); // 🔐 Only USER role is allowed from public signup
+        user.setPhoto("default.png");
 
         userRepository.save(user);
 
