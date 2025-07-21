@@ -25,7 +25,7 @@ public class Problem {
 
     private String name;
     private String author;
-
+    private String difficulty;
     @Column(columnDefinition = "TEXT")
     private String statement;
 

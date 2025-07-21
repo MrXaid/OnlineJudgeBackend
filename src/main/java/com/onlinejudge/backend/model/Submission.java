@@ -2,6 +2,8 @@ package com.onlinejudge.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -34,6 +36,7 @@ public class Submission {
 
     @ManyToOne
     @JoinColumn(name = "problem_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Problem problem;
 
     public Submission(String problemName, String code, String language,

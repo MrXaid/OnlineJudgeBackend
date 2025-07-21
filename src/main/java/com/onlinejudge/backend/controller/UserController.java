@@ -65,7 +65,7 @@ public class UserController {
 //        return ResponseEntity.ok(new APIResponse("Profile updated successfully", true));
 //    }
 
-    @PutMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/me", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<APIResponse> updateProfile(
             @RequestPart(value = "data", required = false) String data,
             @RequestPart(value = "image", required = false) MultipartFile image,
@@ -110,6 +110,20 @@ public class UserController {
     public ResponseEntity<?> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
+
+    // ✅ DELETE /api/users/{username} – Admin only
+    @DeleteMapping("/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<APIResponse> deleteUserByUsername(@PathVariable String username) {
+        try {
+            userService.deleteUserByUsername(username);
+            return ResponseEntity.ok(new APIResponse("User deleted successfully.", true));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(new APIResponse(e.getMessage(), false));
+        }
+    }
+
 
 
 

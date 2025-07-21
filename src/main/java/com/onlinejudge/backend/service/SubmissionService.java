@@ -99,6 +99,16 @@ public class SubmissionService {
 
         return activityMap;
     }
+    public Submission getSubmissionById(Long id) {
+        return submissionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Submission", "id", id));
+    }
+    public List<Submission> getSubmissionsByProblemIdAndUserId(Long problemId, Long userId) {
+        return submissionRepository.findByProblemIdAndUserIdOrderByDateDesc(problemId, userId);
+    }
+
+
+
 
 
 }

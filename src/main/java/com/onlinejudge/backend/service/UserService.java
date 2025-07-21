@@ -2,6 +2,7 @@ package com.onlinejudge.backend.service;
 
 import com.onlinejudge.backend.exception.APIException;
 import com.onlinejudge.backend.exception.ResourceNotFoundException;
+import com.onlinejudge.backend.model.Role;
 import com.onlinejudge.backend.model.Submission;
 import com.onlinejudge.backend.model.User;
 import com.onlinejudge.backend.payload.response.UserStatsResponse;
@@ -169,5 +170,17 @@ public class UserService {
                         user.getPhoto()))
                 .toList();
     }
+
+    public void deleteUserByUsername(String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+
+        if (user.getRole() == Role.ADMIN) {
+            throw new IllegalArgumentException("Cannot delete a user with ADMIN role.");
+        }
+
+        userRepository.delete(user);
+    }
+
 
 }

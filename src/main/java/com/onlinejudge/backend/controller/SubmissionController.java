@@ -124,15 +124,19 @@ public class SubmissionController {
         return ResponseEntity.ok(dtoList);
     }
 
+
     @GetMapping("/problem/{problemId}")
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
-    public ResponseEntity<?> getSubmissionsByProblemId(@PathVariable Long problemId) {
-        List<Submission> submissions = submissionService.getSubmissionsByProblemId(problemId);
+    public ResponseEntity<?> getSubmissionsByProblemId(@PathVariable Long problemId,
+                                                       @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        List<Submission> submissions = submissionService.getSubmissionsByProblemIdAndUserId(problemId, userId);
         List<SubmissionResponseDTO> dtoList = submissions.stream()
                 .map(submissionService::mapToDTO)
                 .toList();
         return ResponseEntity.ok(dtoList);
     }
+
 
     @GetMapping("/my/activity")
     @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
@@ -140,6 +144,20 @@ public class SubmissionController {
         Map<String, Integer> activityMap = submissionService.getActivityMapForUser(userDetails.getId());
         return ResponseEntity.ok(activityMap);
     }
+    @GetMapping("/{id}")
+    @RolesAllowed({"ROLE_USER", "ROLE_ADMIN"})
+    public ResponseEntity<?> getSubmissionById(@PathVariable Long id,
+                                               @AuthenticationPrincipal CustomUserDetails userDetails) {
+        Submission submission = submissionService.getSubmissionById(id);
+
+        // Only allow access if the submission belongs to the logged-in user
+        if (!submission.getUser().getId().equals(userDetails.getId())) {
+            return ResponseEntity.status(403).body(new APIResponse("Not allowed to view this resource", false));
+        }
+        SubmissionResponseDTO dto = submissionService.mapToDTO(submission);
+        return ResponseEntity.ok(dto);
+    }
+
 
 
 

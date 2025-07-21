@@ -16,6 +16,7 @@ public class ProblemAdminResponseDTO {
     private String author;
     private String statement;
     private String explanation;
+    private String difficulty;
     private List<String> tags;
     private int countAC;
     private int countTotal;

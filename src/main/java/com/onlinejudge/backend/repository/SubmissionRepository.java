@@ -16,5 +16,6 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     List<Submission> findByProblemIdOrderByDateDesc(Long problemId);
     @Query("SELECT s FROM Submission s JOIN FETCH s.problem WHERE s.user.id = :userId")
     List<Submission> findAllWithProblemByUserId(@Param("userId") Long userId);
+    List<Submission> findByProblemIdAndUserIdOrderByDateDesc(Long problemId, Long userId);
 
 }
